@@ -46,6 +46,11 @@ jobs:
             # 6. Jalankan migrasi database otomatis
             php artisan migrate --force
 
+            # Compile aset Vite langsung di server setelah ditarik dari GitHub
+            npm install
+            npm run build
+            cp -r public/build $HOME/public_html/build
+
             # 7. Bersihkan dan perbarui cache Laravel
             php artisan config:cache
             php artisan route:cache
