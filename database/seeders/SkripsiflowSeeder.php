@@ -43,7 +43,7 @@ class SkripsiflowSeeder extends Seeder
 
         $dosen = User::create([
             'name' => 'Venera Gania S.Si., M.T.I.',
-            'email' => 'budi.santoso@universitas.test',
+            'email' => 'budi_santoso@gmail.com',
             'nomor_induk' => '198001012010011001',
             'password' => Hash::make('password'),
             'email_verified_at' => now(),
@@ -52,7 +52,7 @@ class SkripsiflowSeeder extends Seeder
 
         $mahasiswa1 = User::create([
             'name' => 'Ahmad Riza Muzakki',
-            'email' => 'ahmad.fauzi@student.test',
+            'email' => 'ahmad_fauzi@gmail.com',
             'nomor_induk' => '2211501001',
             'password' => Hash::make('password'),
             'email_verified_at' => now(),
@@ -61,7 +61,7 @@ class SkripsiflowSeeder extends Seeder
 
         $mahasiswa2 = User::create([
             'name' => 'Siti Nurhaliza',
-            'email' => 'siti.nurhaliza@student.test',
+            'email' => 'siti_nurhaliza@gmail.com',
             'nomor_induk' => '2211501002',
             'password' => Hash::make('password'),
             'email_verified_at' => now(),
@@ -70,7 +70,7 @@ class SkripsiflowSeeder extends Seeder
 
         $mahasiswa3 = User::create([
             'name' => 'Budi Pratama',
-            'email' => 'budi.pratama@student.test',
+            'email' => 'budi_pratama@gmail.com',
             'nomor_induk' => '2211501003',
             'password' => Hash::make('password'),
             'email_verified_at' => now(),
