@@ -18,11 +18,21 @@ export default {
                 brand: {
                     50: '#eef2ff',
                     100: '#e0e7ff',
+                    200: '#c7d2fe',
                     500: '#6366f1',
                     600: '#4f46e5',
                     700: '#4338ca',
+                    800: '#3730a3',
                     900: '#312e81',
                 },
+                accent: {
+                    300: '#fcd34d',
+                    500: '#f59e0b',
+                    600: '#d97706',
+                },
+            },
+            borderRadius: {
+                '4xl': '2rem',
             },
             boxShadow: {
                 soft: '0 4px 24px -4px rgba(15, 23, 42, 0.08)',
