@@ -16,12 +16,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
 
       - name: Build frontend assets
         run: |
-          npm ci
+          npm install --no-audit --no-fund
           npm run build
           test -f public/build/manifest.json
 
