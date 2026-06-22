@@ -13,6 +13,18 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Build frontend assets
+        run: |
+          npm ci
+          npm run build
+          test -f public/build/manifest.json
+
       - name: Setup SSH Connection
         run: |
           mkdir -p ~/.ssh
@@ -20,39 +32,27 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Execute Deployment Commands via SSH
+      - name: Deploy application via SSH
         run: |
           ssh -i ~/.ssh/id_rsa -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            # 1. Masuk ke folder core Laravel (skripflow)
+            set -e
             cd $HOME/skripflow
-
-            # 2. Tarik update kode terbaru dari GitHub
             git pull origin main
-
-            # 3. Sinkronisasi folder public ke public_html
+            composer install --no-dev --optimize-autoloader --no-interaction
             rm -rf public/storage
             cp -r public/* $HOME/public_html/
-            rm -rf public
-
-            # 4. Memastikan symlink storage di public_html tetap aman menuju skripflow
             if [ ! -L $HOME/public_html/storage ]; then
               rm -rf $HOME/public_html/storage
               ln -s $HOME/skripflow/storage/app/public $HOME/public_html/storage
             fi
-
-            # 5. Install dependensi composer
-            composer install --no-dev --optimize-autoloader --no-interaction
-
-            # 6. Jalankan migrasi database otomatis
             php artisan migrate --force
-
-            # Compile aset Vite langsung di server setelah ditarik dari GitHub
-            npm install
-            npm run build
-            cp -r public/build $HOME/public_html/build
-
-            # 7. Bersihkan dan perbarui cache Laravel
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
           EOF
+
+      - name: Upload Vite build to server
+        run: |
+          ssh -i ~/.ssh/id_rsa -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p $HOME/skripflow/public/build $HOME/public_html/build"
+          scp -i ~/.ssh/id_rsa -P ${{ secrets.SSH_PORT }} -r public/build/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:$HOME/skripflow/public/build/
+          scp -i ~/.ssh/id_rsa -P ${{ secrets.SSH_PORT }} -r public/build/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:$HOME/public_html/build/
