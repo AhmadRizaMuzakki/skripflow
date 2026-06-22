@@ -38,21 +38,24 @@ jobs:
             set -e
             cd $HOME/skripflow
             git pull origin main
+            git restore public/ 2>/dev/null || git checkout HEAD -- public/
+            mkdir -p public/build
             composer install --no-dev --optimize-autoloader --no-interaction
-            rm -rf public/storage
-            cp -r public/* $HOME/public_html/
-            if [ ! -L $HOME/public_html/storage ]; then
-              rm -rf $HOME/public_html/storage
-              ln -s $HOME/skripflow/storage/app/public $HOME/public_html/storage
-            fi
+            php artisan storage:link 2>/dev/null || true
             php artisan migrate --force
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
           EOF
 
-      - name: Upload Vite build to server
+      - name: Upload public directory to server
         run: |
-          ssh -i ~/.ssh/id_rsa -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p $HOME/skripflow/public/build $HOME/public_html/build"
-          scp -i ~/.ssh/id_rsa -P ${{ secrets.SSH_PORT }} -r public/build/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:$HOME/skripflow/public/build/
-          scp -i ~/.ssh/id_rsa -P ${{ secrets.SSH_PORT }} -r public/build/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:$HOME/public_html/build/
+          ssh -i ~/.ssh/id_rsa -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p $HOME/skripflow/public $HOME/public_html"
+          scp -i ~/.ssh/id_rsa -P ${{ secrets.SSH_PORT }} -r public/. ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:$HOME/skripflow/public/
+          scp -i ~/.ssh/id_rsa -P ${{ secrets.SSH_PORT }} -r public/. ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:$HOME/public_html/
+          ssh -i ~/.ssh/id_rsa -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            if [ ! -L $HOME/public_html/storage ]; then
+              rm -rf $HOME/public_html/storage
+              ln -s $HOME/skripflow/storage/app/public $HOME/public_html/storage
+            fi
+          EOF
