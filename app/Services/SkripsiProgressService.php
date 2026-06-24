@@ -254,7 +254,7 @@ class SkripsiProgressService
         return match ($status) {
             ProgressSkripsiStatus::Disetujui => 'ACC',
             ProgressSkripsiStatus::PerluRevisi => 'Revisi',
-            ProgressSkripsiStatus::Bimbingan => 'Bimbingan',
+            ProgressSkripsiStatus::Bimbingan => 'Ditinjau',
             ProgressSkripsiStatus::Draft => 'Draft',
         };
     }

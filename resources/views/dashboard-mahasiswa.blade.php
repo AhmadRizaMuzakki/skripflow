@@ -96,9 +96,9 @@
                                     <td class="max-w-[200px] truncate px-6 py-4 text-slate-500" title="{{ $activity['catatan'] }}">
                                         {{ $activity['catatan'] }}
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class="max-w-xs px-6 py-4">
                                         @if ($activity['file_url'])
-                                            <a href="{{ $activity['file_url'] }}" target="_blank" rel="noopener" class="auth-link truncate text-xs">
+                                            <a href="{{ $activity['file_url'] }}" target="_blank" rel="noopener" class="auth-link break-all text-xs">
                                                 {{ $activity['file_name'] }}
                                             </a>
                                         @else

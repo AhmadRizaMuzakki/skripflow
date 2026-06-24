@@ -19,9 +19,7 @@
 
             <div class="min-w-0">
                 @isset($header)
-                    <div class="truncate">
-                        {{ $header }}
-                    </div>
+                    {{ $header }}
                 @else
                     <h1 class="text-lg font-semibold text-slate-900">Dashboard</h1>
                 @endisset

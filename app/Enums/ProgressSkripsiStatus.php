@@ -13,7 +13,7 @@ enum ProgressSkripsiStatus: string
     {
         return match ($this) {
             self::Draft => 'Draft',
-            self::Bimbingan => 'Bimbingan',
+            self::Bimbingan => 'Ditinjau',
             self::PerluRevisi => 'Perlu Revisi',
             self::Disetujui => 'Disetujui',
         };
