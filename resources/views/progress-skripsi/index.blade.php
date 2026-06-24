@@ -2,8 +2,18 @@
     <x-slot name="header">
         <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h1 class="text-lg font-semibold text-slate-900">Riwayat Progress</h1>
-                <p class="text-sm text-slate-500">Semua submission progress skripsi Anda.</p>
+                <h1 class="text-lg font-semibold text-slate-900">Progress Skripsi</h1>
+                <p class="text-sm text-slate-500">
+                    @if ($tableView ?? false)
+                        @if (Auth::user()->isDosen())
+                            Semua submission progress mahasiswa bimbingan Anda.
+                        @else
+                            Semua submission progress mahasiswa.
+                        @endif
+                    @else
+                        Semua submission progress skripsi Anda.
+                    @endif
+                </p>
             </div>
             @if (Auth::user()->isMahasiswa())
                 <a href="{{ route('progress-skripsi.create') }}"
@@ -23,13 +33,75 @@
         <div class="flex flex-col items-center rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-16 text-center shadow-soft">
             <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-50 text-3xl">📄</div>
             <h3 class="mt-4 font-semibold text-slate-900">Belum ada progress</h3>
-            <p class="mt-2 max-w-sm text-sm text-slate-500">Mulai kirim progress bab skripsi pertama Anda ke dosen pembimbing.</p>
+            <p class="mt-2 max-w-sm text-sm text-slate-500">
+                @if (Auth::user()->isMahasiswa())
+                    Mulai kirim progress bab skripsi pertama Anda ke dosen pembimbing.
+                @else
+                    Belum ada laporan progress dari mahasiswa bimbingan.
+                @endif
+            </p>
             @if (Auth::user()->isMahasiswa())
                 <a href="{{ route('progress-skripsi.create') }}"
                    class="auth-btn mt-6 w-auto px-6">
                     Input Progres Pertama
                 </a>
             @endif
+        </div>
+    @elseif ($tableView ?? false)
+        <div class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-soft">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="border-b border-slate-100 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                        <tr>
+                            <th class="px-6 py-3">Mahasiswa</th>
+                            <th class="px-6 py-3">Bab</th>
+                            <th class="px-6 py-3">Status</th>
+                            <th class="px-6 py-3">Berkas</th>
+                            <th class="px-6 py-3">Diperbarui</th>
+                            <th class="px-6 py-3">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @foreach ($progressList as $progress)
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="px-6 py-4 font-medium text-slate-900">{{ $progress->mahasiswa->name }}</td>
+                                <td class="px-6 py-4">{{ $progress->bab?->fullLabel() ?? '-' }}</td>
+                                <td class="px-6 py-4">
+                                    @if ($progress->status)
+                                        <span class="badge badge-{{ $progress->status->color() }}">{{ $progress->status->label() }}</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4">
+                                    @if ($progress->file_path)
+                                        <a href="{{ route('progress-skripsi.file', $progress) }}" target="_blank" rel="noopener"
+                                           class="text-brand-600 hover:text-brand-700">
+                                            {{ basename($progress->file_path) }}
+                                        </a>
+                                    @else
+                                        <span class="text-slate-400">-</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 text-slate-600">{{ $progress->updated_at?->format('d M Y, H:i') ?? '-' }}</td>
+                                <td class="px-6 py-4">
+                                    @if ($progress->mahasiswa->mahasiswaProfile && Auth::user()->supervises($progress->mahasiswa->mahasiswaProfile))
+                                        <a href="{{ route('mahasiswa-bimbingan.show', $progress->mahasiswa->mahasiswaProfile) }}"
+                                           class="text-sm font-medium text-brand-600 hover:text-brand-700">
+                                            Detail
+                                        </a>
+                                    @elseif (Auth::user()->isAdmin())
+                                        <a href="{{ route('mahasiswa-bimbingan.show', $progress->mahasiswa->mahasiswaProfile) }}"
+                                           class="text-sm font-medium text-brand-600 hover:text-brand-700">
+                                            Detail
+                                        </a>
+                                    @else
+                                        <span class="text-slate-400">-</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     @else
         <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -44,12 +116,6 @@
                             <span class="badge badge-{{ $progress->status->color() }}">{{ $progress->status->label() }}</span>
                         @endif
                     </div>
-
-                    @if (Auth::user()->isAdmin())
-                        <p class="mt-3 text-sm text-slate-600">
-                            <span class="font-medium">Mahasiswa:</span> {{ $progress->mahasiswa->name }}
-                        </p>
-                    @endif
 
                     <div class="mt-4 space-y-2 border-t border-slate-100 pt-4 text-sm text-slate-600">
                         @if ($progress->file_path)

@@ -68,6 +68,18 @@ class User extends Authenticatable
         return $this->hasRole('admin');
     }
 
+    public function hasDosenPembimbing(): bool
+    {
+        return $this->mahasiswaProfile?->dosen_pembimbing_id !== null;
+    }
+
+    public function needsDosenPembimbing(): bool
+    {
+        return $this->isMahasiswa()
+            && $this->mahasiswaProfile !== null
+            && $this->mahasiswaProfile->dosen_pembimbing_id === null;
+    }
+
     public function supervises(MahasiswaProfile $profile): bool
     {
         if ($this->isAdmin() && ! $this->isDosen()) {

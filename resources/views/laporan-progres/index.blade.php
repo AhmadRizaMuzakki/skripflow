@@ -9,8 +9,6 @@
     <x-alert />
 
     <div class="mx-auto max-w-4xl">
-        <x-dosen.subnav active="laporan" :pending-count="$pendingCount" />
-
         {{-- Filter tabs --}}
         <div class="mb-6 flex flex-wrap gap-2">
             @foreach (['semua' => 'Semua', 'menunggu' => 'Menunggu', 'selesai' => 'Selesai'] as $value => $label)

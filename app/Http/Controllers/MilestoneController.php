@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Enums\JenisMilestone;
 use App\Enums\MilestoneStatus;
 use App\Models\Milestone;
+use App\Models\MahasiswaProfile;
 use App\Models\ProgressSkripsi;
+use App\Services\DosenDashboardService;
 use App\Services\TimelineMilestoneService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,7 +15,7 @@ use Illuminate\View\View;
 
 class MilestoneController extends Controller
 {
-    public function index(Request $request, TimelineMilestoneService $timelineService): View
+    public function index(Request $request, TimelineMilestoneService $timelineService, DosenDashboardService $dosenService): View
     {
         $this->authorizeAccess();
 
@@ -41,12 +43,22 @@ class MilestoneController extends Controller
             return view('milestones.timeline', compact('timelineSteps', 'milestones', 'summary'));
         }
 
-        $milestones = Milestone::query()
-            ->with('mahasiswa')
-            ->latest('tanggal_pelaksanaan')
-            ->get();
+        $filters = [
+            'mahasiswa_id' => $request->query('mahasiswa_id'),
+            'jenis' => $request->query('jenis'),
+            'status' => $request->query('status'),
+        ];
 
-        return view('milestones.index', compact('milestones'));
+        $profiles = $dosenService->getSupervisedProfiles($user);
+        $milestones = $dosenService->getMilestones($user, $filters);
+
+        return view('milestones.index', [
+            'milestones' => $milestones,
+            'showActions' => $user->isDosen(),
+            'isDosenView' => $user->isDosen(),
+            'profiles' => $profiles,
+            'filters' => $filters,
+        ]);
     }
 
     public function create(Request $request): View
@@ -117,7 +129,9 @@ class MilestoneController extends Controller
     private function authorizeAccess(): void
     {
         abort_unless(
-            auth()->user()->isMahasiswa() || auth()->user()->isAdmin(),
+            auth()->user()->isMahasiswa()
+            || auth()->user()->isAdmin()
+            || auth()->user()->isDosen(),
             403
         );
     }

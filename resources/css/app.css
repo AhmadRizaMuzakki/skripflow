@@ -78,7 +78,51 @@
     }
 
     .dosen-stat-card {
-        @apply flex items-center gap-4 rounded-2xl border border-slate-100 bg-white p-5 shadow-soft;
+        @apply relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-5 shadow-soft transition hover:shadow-card;
+    }
+
+    .dosen-stat-card__accent {
+        @apply absolute inset-x-0 top-0 h-1;
+    }
+
+    .dosen-dashboard-hero {
+        @apply relative overflow-hidden rounded-3xl border border-brand-100/80 bg-gradient-to-br from-brand-50 via-white to-violet-50 p-6 shadow-soft sm:p-8;
+    }
+
+    .dosen-panel {
+        @apply overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-soft;
+    }
+
+    .dosen-panel__header {
+        @apply flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-slate-50/80 px-5 py-4 sm:px-6;
+    }
+
+    .dosen-filter-panel {
+        @apply rounded-2xl border border-slate-100 bg-white p-5 shadow-soft sm:p-6;
+    }
+
+    .dosen-quick-link {
+        @apply flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 p-4 transition hover:border-brand-200 hover:bg-brand-50/40 hover:shadow-sm;
+    }
+
+    .dosen-attention-item {
+        @apply flex items-center gap-4 rounded-xl border border-white/80 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md;
+    }
+
+    .dosen-table th {
+        @apply px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500;
+    }
+
+    .dosen-table td {
+        @apply px-5 py-4 text-sm;
+    }
+
+    .dosen-table tbody tr {
+        @apply border-t border-slate-100 transition hover:bg-brand-50/30;
+    }
+
+    .dosen-avatar {
+        @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-sm font-bold text-white shadow-sm;
     }
 
     .dosen-stat-icon {

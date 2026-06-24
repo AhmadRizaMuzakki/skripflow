@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\BabSkripsi;
 use App\Enums\ProgressSkripsiStatus;
+use App\Models\MahasiswaProfile;
 use App\Models\ProgressSkripsi;
 use App\Services\SkripsiProgressService;
 use Illuminate\Http\RedirectResponse;
@@ -27,10 +28,20 @@ class ProgressSkripsiController extends Controller
         $progressList = ProgressSkripsi::query()
             ->with('mahasiswa')
             ->when($user->isMahasiswa(), fn ($q) => $q->where('mahasiswa_id', $user->id))
+            ->when($user->isDosen(), function ($query) use ($user) {
+                $studentIds = MahasiswaProfile::query()
+                    ->supervisedBy($user)
+                    ->pluck('user_id');
+
+                $query->whereIn('mahasiswa_id', $studentIds);
+            })
             ->latest('updated_at')
             ->get();
 
-        return view('progress-skripsi.index', compact('progressList'));
+        return view('progress-skripsi.index', [
+            'progressList' => $progressList,
+            'tableView' => $user->isDosen() || $user->isAdmin(),
+        ]);
     }
 
     public function create(Request $request): View
@@ -115,7 +126,9 @@ class ProgressSkripsiController extends Controller
     private function authorizeAccess(): void
     {
         abort_unless(
-            auth()->user()->isMahasiswa() || auth()->user()->isAdmin(),
+            auth()->user()->isMahasiswa()
+            || auth()->user()->isAdmin()
+            || auth()->user()->isDosen(),
             403
         );
     }

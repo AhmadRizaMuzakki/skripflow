@@ -19,6 +19,7 @@
                     Dosen Pembimbing:
                     <span class="font-medium text-brand-700">{{ $profile->dosenPembimbing->name }}</span>
                 </p>
+                <p class="mt-1 text-xs text-slate-500">Penugasan dosen pembimbing bersifat permanen.</p>
             @elseif ($profile)
                 <p class="mt-2 text-sm text-amber-600">Dosen pembimbing belum ditetapkan.</p>
             @else

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\ProgressSkripsiStatus;
 use App\Models\MahasiswaProfile;
+use App\Models\Milestone;
 use App\Models\ProgressSkripsi;
 use App\Models\User;
 use Illuminate\Support\Collection;
@@ -192,5 +193,54 @@ class DosenDashboardService
                 'is_kritis' => $isKritis,
             ];
         })->filter(fn ($item) => $item['pending'] || $item['is_kritis'])->values();
+    }
+
+    /**
+     * @param  array{mahasiswa_id?: string|null, jenis?: string|null, status?: string|null}  $filters
+     * @return Collection<int, Milestone>
+     */
+    public function getMilestones(User $viewer, array $filters = []): Collection
+    {
+        $profilesQuery = MahasiswaProfile::query()->supervisedBy($viewer);
+
+        if (! empty($filters['mahasiswa_id'])) {
+            $profilesQuery->where('user_id', $filters['mahasiswa_id']);
+        }
+
+        $studentIds = $profilesQuery->pluck('user_id');
+
+        if ($studentIds->isEmpty()) {
+            return collect();
+        }
+
+        $query = Milestone::query()
+            ->with('mahasiswa')
+            ->whereIn('mahasiswa_id', $studentIds)
+            ->latest('tanggal_pelaksanaan');
+
+        if (! empty($filters['jenis'])) {
+            $query->where('jenis_milestone', $filters['jenis']);
+        }
+
+        if (! empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+
+        return $query->get();
+    }
+
+    /**
+     * @param  Collection<int, MahasiswaProfile>  $profiles
+     * @return Collection<int, MahasiswaProfile>
+     */
+    public function filterProfiles(Collection $profiles, ?string $mahasiswaId): Collection
+    {
+        if (! $mahasiswaId) {
+            return $profiles;
+        }
+
+        return $profiles
+            ->where('user_id', (int) $mahasiswaId)
+            ->values();
     }
 }
