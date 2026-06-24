@@ -85,7 +85,12 @@ class ProgressSkripsiController extends Controller
                 Storage::disk('public')->delete($existing->file_path);
             }
 
-            $filePath = $request->file('file')->store('skripsi', 'public');
+            $file = $request->file('file');
+            $nim = $request->user()->nomor_induk ?: (string) $request->user()->id;
+            $directory = "skripsi/{$nim}/{$validated['bab']}";
+            $fileName = $this->sanitizeUploadedFileName($file->getClientOriginalName());
+
+            $filePath = $file->storeAs($directory, $fileName, 'public');
         }
 
         $this->progressService->upsertProgress($request->user(), [
@@ -121,6 +126,14 @@ class ProgressSkripsiController extends Controller
             $progress->file_path,
             basename($progress->file_path),
         );
+    }
+
+    private function sanitizeUploadedFileName(string $filename): string
+    {
+        $filename = basename(str_replace(['\\', '/', "\0"], '', $filename));
+        $filename = trim($filename);
+
+        return $filename !== '' ? $filename : 'dokumen.pdf';
     }
 
     private function authorizeAccess(): void
