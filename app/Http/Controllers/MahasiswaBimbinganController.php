@@ -34,10 +34,6 @@ class MahasiswaBimbinganController extends Controller
 
         $user = $request->user();
 
-        if ($user->isDosen() && $mahasiswaBimbingan->dosen_pembimbing_id !== $user->id) {
-            abort(403);
-        }
-
         $mahasiswaBimbingan->load(['user', 'dosenPembimbing']);
 
         $pendingProgress = $this->dosenService->getPendingProgress($mahasiswaBimbingan->user);

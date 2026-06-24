@@ -50,12 +50,13 @@ class ProgressReviewController extends Controller
 
         $progress->load('mahasiswa.mahasiswaProfile');
 
-        if ($user->isAdmin()) {
+        if ($user->isAdmin() && ! $user->isDosen()) {
             return;
         }
 
         abort_unless(
-            $progress->mahasiswa->mahasiswaProfile?->dosen_pembimbing_id === $user->id,
+            $progress->mahasiswa->mahasiswaProfile
+                && $user->supervises($progress->mahasiswa->mahasiswaProfile),
             403
         );
     }

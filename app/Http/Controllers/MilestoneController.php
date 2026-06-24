@@ -128,14 +128,15 @@ class MilestoneController extends Controller
 
         abort_unless($user->isDosen() || $user->isAdmin(), 403);
 
-        if ($user->isAdmin()) {
+        if ($user->isAdmin() && ! $user->isDosen()) {
             return;
         }
 
         $milestone->loadMissing('mahasiswa.mahasiswaProfile');
 
         abort_unless(
-            $milestone->mahasiswa->mahasiswaProfile?->dosen_pembimbing_id === $user->id,
+            $milestone->mahasiswa->mahasiswaProfile
+                && $user->supervises($milestone->mahasiswa->mahasiswaProfile),
             403
         );
     }

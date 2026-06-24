@@ -21,7 +21,7 @@ class DosenDashboardService
     {
         return MahasiswaProfile::query()
             ->with(['user', 'dosenPembimbing'])
-            ->when($dosen->isDosen(), fn ($q) => $q->where('dosen_pembimbing_id', $dosen->id))
+            ->supervisedBy($dosen)
             ->latest()
             ->get();
     }
@@ -140,7 +140,7 @@ class DosenDashboardService
     public function getSubmissionsForDosen(User $dosen, ?string $filter = null): Collection
     {
         $studentIds = MahasiswaProfile::query()
-            ->when($dosen->isDosen(), fn ($q) => $q->where('dosen_pembimbing_id', $dosen->id))
+            ->supervisedBy($dosen)
             ->pluck('user_id');
 
         $query = ProgressSkripsi::query()
@@ -160,7 +160,7 @@ class DosenDashboardService
     public function getPendingCount(User $dosen): int
     {
         $studentIds = MahasiswaProfile::query()
-            ->when($dosen->isDosen(), fn ($q) => $q->where('dosen_pembimbing_id', $dosen->id))
+            ->supervisedBy($dosen)
             ->pluck('user_id');
 
         return ProgressSkripsi::query()

@@ -83,7 +83,7 @@
                             </div>
                         </div>
 
-                        @if ($isWaiting && $profile)
+                        @if ($isWaiting && $profile && auth()->user()->supervises($profile))
                             <a href="{{ route('mahasiswa-bimbingan.show', $profile) }}"
                                class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-brand-600 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 sm:w-auto sm:px-6">
                                 Periksa & Validasi
