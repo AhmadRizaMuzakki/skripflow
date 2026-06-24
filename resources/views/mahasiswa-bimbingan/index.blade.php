@@ -98,8 +98,8 @@
                                     <span class="font-bold text-brand-700">{{ $profile->total_progress }}%</span>
                                 </div>
                                 <div class="h-2 overflow-hidden rounded-full bg-slate-200/80">
-                                    <div class="h-full rounded-full bg-gradient-to-r from-brand-500 to-brand-600 transition-all"
-                                         style="width: {{ max($profile->total_progress, 2) }}%"></div>
+                                    <div class="h-full rounded-full bg-brand-600 transition-all duration-500"
+                                         style="width: {{ min(max($profile->total_progress, 2), 100) }}%"></div>
                                 </div>
                                 <p class="mt-2 text-xs font-medium text-slate-600">{{ $row['progres_label'] }}</p>
                             </div>
