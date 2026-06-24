@@ -29,6 +29,7 @@ class WelcomeNotification extends Notification
         return [
             'title' => 'Selamat datang di SkripsiFlow',
             'message' => 'Akun mahasiswa Anda berhasil dibuat. Mulai unggah progress skripsi Anda.',
+            'url' => route('progress-skripsi.create'),
         ];
     }
 }

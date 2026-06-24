@@ -7,6 +7,7 @@ use App\Http\Controllers\DosenPembimbingController;
 use App\Http\Controllers\LaporanProgresController;
 use App\Http\Controllers\MahasiswaBimbinganController;
 use App\Http\Controllers\MilestoneController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProgressReviewController;
 use App\Http\Controllers\ProgressSkripsiController;
@@ -24,6 +25,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
+    Route::get('/notifications/{notification}/read', [NotificationController::class, 'read'])->name('notifications.read');
 
     Route::get('/dosen-pembimbing', [DosenPembimbingController::class, 'show'])->name('dosen-pembimbing.show');
     Route::post('/dosen-pembimbing', [DosenPembimbingController::class, 'store'])->name('dosen-pembimbing.store');

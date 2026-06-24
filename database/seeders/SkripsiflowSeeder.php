@@ -10,6 +10,8 @@ use App\Models\MahasiswaProfile;
 use App\Models\Milestone;
 use App\Models\ProgressSkripsi;
 use App\Models\User;
+use App\Notifications\ProgressReviseNotification;
+use App\Notifications\ProgressSubmittedNotification;
 use App\Notifications\WelcomeNotification;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -174,6 +176,24 @@ class SkripsiflowSeeder extends Seeder
         ]);
 
         $mahasiswa1->notify(new WelcomeNotification);
+
+        $progressSiti = ProgressSkripsi::query()
+            ->where('mahasiswa_id', $mahasiswa2->id)
+            ->where('bab', BabSkripsi::Bab1)
+            ->first();
+
+        if ($progressSiti) {
+            $dosen->notify(new ProgressSubmittedNotification($progressSiti));
+        }
+
+        $progressAhmadBab2 = ProgressSkripsi::query()
+            ->where('mahasiswa_id', $mahasiswa1->id)
+            ->where('bab', BabSkripsi::Bab2)
+            ->first();
+
+        if ($progressAhmadBab2) {
+            $mahasiswa1->notify(new ProgressReviseNotification($progressAhmadBab2));
+        }
     }
 
     /**

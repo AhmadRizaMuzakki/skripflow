@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\ProgressSkripsi;
+use App\Notifications\ProgressApprovedNotification;
+use App\Notifications\ProgressReviseNotification;
 use App\Services\DosenDashboardService;
 use App\Services\SkripsiProgressService;
 use Illuminate\Http\RedirectResponse;
@@ -19,7 +21,10 @@ class ProgressReviewController extends Controller
     {
         $this->authorizeReview($request, $progress);
 
-        $this->progressService->approveByDosen($progress);
+        $progress = $this->progressService->approveByDosen($progress);
+
+        $progress->loadMissing('mahasiswa');
+        $progress->mahasiswa->notify(new ProgressApprovedNotification($progress));
 
         return back()->with('success', 'Progress berhasil disetujui (ACC).');
     }
@@ -33,11 +38,14 @@ class ProgressReviewController extends Controller
             'deadline_revisi' => ['required', 'date', 'after_or_equal:today'],
         ]);
 
-        $this->progressService->reviseByDosen(
+        $progress = $this->progressService->reviseByDosen(
             $progress,
             $validated['catatan_revisi'],
             $validated['deadline_revisi'],
         );
+
+        $progress->loadMissing('mahasiswa');
+        $progress->mahasiswa->notify(new ProgressReviseNotification($progress));
 
         return back()->with('success', 'Progress dikembalikan untuk revisi.');
     }

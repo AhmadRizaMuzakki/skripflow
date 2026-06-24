@@ -6,6 +6,7 @@ use App\Enums\BabSkripsi;
 use App\Enums\ProgressSkripsiStatus;
 use App\Models\MahasiswaProfile;
 use App\Models\ProgressSkripsi;
+use App\Notifications\ProgressSubmittedNotification;
 use App\Services\SkripsiProgressService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -69,8 +70,8 @@ class ProgressSkripsiController extends Controller
 
         $validated = $request->validate([
             'bab' => ['required', 'in:'.implode(',', array_column(BabSkripsi::cases(), 'value'))],
-            'catatan_revisi' => ['nullable', 'string', 'max:2000'],
-            'file' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:10240'],
+            'catatan_revisi' => ['required', 'string', 'max:2000'],
+            'file' => ['required', 'file', 'mimes:pdf,doc,docx', 'max:10240'],
         ]);
 
         $filePath = null;
@@ -93,11 +94,18 @@ class ProgressSkripsiController extends Controller
             $filePath = $file->storeAs($directory, $fileName, 'public');
         }
 
-        $this->progressService->upsertProgress($request->user(), [
+        $progress = $this->progressService->upsertProgress($request->user(), [
             'bab' => $validated['bab'],
             'catatan_revisi' => $validated['catatan_revisi'] ?? null,
             'file_path' => $filePath,
         ]);
+
+        $request->user()->loadMissing('mahasiswaProfile.dosenPembimbing');
+        $dosen = $request->user()->mahasiswaProfile?->dosenPembimbing;
+
+        if ($dosen) {
+            $dosen->notify(new ProgressSubmittedNotification($progress));
+        }
 
         return redirect()
             ->route('dashboard')

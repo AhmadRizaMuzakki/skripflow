@@ -155,19 +155,24 @@
                     </div>
 
                     <div>
-                        <label for="catatan_revisi" class="auth-label">Catatan Kemajuan</label>
+                        <label for="catatan_revisi" class="auth-label">
+                            Catatan Kemajuan <span class="text-red-400">*</span>
+                        </label>
                         <textarea
                             id="catatan_revisi"
                             name="catatan_revisi"
                             rows="5"
                             class="auth-input resize-y text-base leading-relaxed"
                             placeholder="Contoh: Sudah memperbaiki kutipan di sub-bab 2.3 dan menambahkan tabel perbandingan metode..."
+                            required
                         >{{ old('catatan_revisi') }}</textarea>
                         <x-input-error :messages="$errors->get('catatan_revisi')" class="mt-2" />
                     </div>
 
                     <div x-data="{ fileName: '' }">
-                        <label class="auth-label">File Pendukung</label>
+                        <label class="auth-label">
+                            File Pendukung <span class="text-red-400">*</span>
+                        </label>
                         <label
                             for="file"
                             class="group mt-1 flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-brand-200 bg-brand-50 px-6 py-8 text-center transition hover:border-brand-400 hover:bg-brand-100/50"
@@ -188,6 +193,7 @@
                                 type="file"
                                 accept=".pdf,.doc,.docx"
                                 class="sr-only"
+                                required
                                 @change="fileName = $event.target.files[0]?.name ?? ''"
                             />
                         </label>
