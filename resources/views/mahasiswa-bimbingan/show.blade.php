@@ -23,7 +23,7 @@
             <div class="min-w-0 flex-1">
                 <h2 class="text-xl font-bold text-slate-900">{{ $profile->user->name }}</h2>
                 <p class="text-sm text-slate-500">NIM: {{ $profile->user->nomor_induk }}</p>
-                <p class="mt-3 text-sm leading-relaxed text-slate-700">
+                <p class="mt-3 break-words text-sm leading-relaxed text-slate-700">
                     <span class="font-medium text-slate-800">Judul:</span>
                     {{ $profile->judul_skripsi ?? 'Belum diisi' }}
                 </p>
@@ -38,7 +38,7 @@
 
         <div class="grid gap-6 lg:grid-cols-5">
             {{-- Pending action --}}
-            <div class="lg:col-span-3">
+            <div class="min-w-0 lg:col-span-3">
                 @if ($pendingProgress)
                     <div class="rounded-2xl border border-amber-200 bg-amber-50 p-6 shadow-soft">
                         <div class="flex items-center gap-2">
@@ -51,18 +51,18 @@
                         </div>
 
                         <div class="mt-4 space-y-3 rounded-xl bg-white p-4 text-sm">
-                            <div class="flex justify-between gap-4 border-b border-slate-100 pb-3">
+                            <div class="grid gap-1 border-b border-slate-100 pb-3 sm:grid-cols-[auto,1fr] sm:gap-4 sm:items-start">
                                 <span class="text-slate-500">Tanggal Upload</span>
-                                <span class="font-medium text-slate-800">{{ $pendingProgress->updated_at?->translatedFormat('d F Y, H:i') }} WIB</span>
+                                <span class="font-medium text-slate-800 sm:text-right">{{ $pendingProgress->updated_at?->translatedFormat('d F Y, H:i') }} WIB</span>
                             </div>
-                            <div class="flex justify-between gap-4 border-b border-slate-100 pb-3">
+                            <div class="grid gap-1 border-b border-slate-100 pb-3 sm:grid-cols-[auto,1fr] sm:gap-4 sm:items-start">
                                 <span class="text-slate-500">Tahapan</span>
-                                <span class="font-medium text-slate-800">{{ $pendingProgress->bab->fullLabel() }}</span>
+                                <span class="break-words font-medium text-slate-800 sm:text-right">{{ $pendingProgress->bab->fullLabel() }}</span>
                             </div>
                             @if ($pendingProgress->file_path)
-                                <div class="flex justify-between gap-4">
+                                <div class="grid gap-1 sm:grid-cols-[auto,1fr] sm:gap-4 sm:items-start">
                                     <span class="text-slate-500">Berkas</span>
-                                    <a href="{{ route('progress-skripsi.file', $pendingProgress) }}" target="_blank" rel="noopener" class="auth-link font-medium">
+                                    <a href="{{ route('progress-skripsi.file', $pendingProgress) }}" target="_blank" rel="noopener" class="auth-link break-all font-medium sm:text-right">
                                         {{ basename($pendingProgress->file_path) }} ↗
                                     </a>
                                 </div>
@@ -72,7 +72,7 @@
                         @if ($pendingProgress->catatan_revisi)
                             <div class="mt-4 rounded-xl border border-slate-100 bg-white p-4">
                                 <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Catatan Mahasiswa</p>
-                                <p class="mt-2 text-sm leading-relaxed text-slate-700">{{ $pendingProgress->catatan_revisi }}</p>
+                                <p class="mt-2 break-words text-sm leading-relaxed text-slate-700">{{ $pendingProgress->catatan_revisi }}</p>
                             </div>
                         @endif
 
