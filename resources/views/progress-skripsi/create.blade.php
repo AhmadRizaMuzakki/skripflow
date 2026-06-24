@@ -186,7 +186,7 @@
                                 <span class="text-brand-600">Klik untuk upload</span> atau seret file ke sini
                             </p>
                             <p class="mt-1 text-xs text-slate-400">PDF atau DOCX · Maks. 10 MB</p>
-                            <p x-show="fileName" x-text="fileName" class="mt-3 rounded-lg bg-brand-100 px-3 py-1.5 text-sm font-medium text-brand-700"></p>
+                            <p x-show="fileName" x-text="fileName" class="mt-3 max-w-full break-all rounded-lg bg-brand-100 px-3 py-1.5 text-sm font-medium text-brand-700"></p>
                             <input
                                 id="file"
                                 name="file"
