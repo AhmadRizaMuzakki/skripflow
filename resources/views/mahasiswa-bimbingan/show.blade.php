@@ -62,7 +62,7 @@
                             @if ($pendingProgress->file_path)
                                 <div class="flex justify-between gap-4">
                                     <span class="text-slate-500">Berkas</span>
-                                    <a href="{{ asset('storage/'.$pendingProgress->file_path) }}" target="_blank" rel="noopener" class="auth-link font-medium">
+                                    <a href="{{ route('progress-skripsi.file', $pendingProgress) }}" target="_blank" rel="noopener" class="auth-link font-medium">
                                         {{ basename($pendingProgress->file_path) }} ↗
                                     </a>
                                 </div>

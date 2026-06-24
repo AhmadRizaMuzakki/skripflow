@@ -8,6 +8,7 @@ use App\Models\ProgressSkripsi;
 use App\Services\SkripsiProgressService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
@@ -85,6 +86,30 @@ class ProgressSkripsiController extends Controller
         return redirect()
             ->route('dashboard')
             ->with('success', 'Progress skripsi berhasil dikirim.');
+    }
+
+    public function file(Request $request, ProgressSkripsi $progress): StreamedResponse
+    {
+        abort_unless($progress->file_path, 404);
+
+        $user = $request->user();
+        $progress->loadMissing('mahasiswa.mahasiswaProfile');
+
+        $canAccess = $user->isAdmin()
+            || $progress->mahasiswa_id === $user->id
+            || (
+                $user->isDosen()
+                && $progress->mahasiswa->mahasiswaProfile
+                && $user->supervises($progress->mahasiswa->mahasiswaProfile)
+            );
+
+        abort_unless($canAccess, 403);
+        abort_unless(Storage::disk('public')->exists($progress->file_path), 404);
+
+        return Storage::disk('public')->response(
+            $progress->file_path,
+            basename($progress->file_path),
+        );
     }
 
     private function authorizeAccess(): void

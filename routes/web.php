@@ -25,6 +25,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/progress-skripsi', [ProgressSkripsiController::class, 'index'])->name('progress-skripsi.index');
     Route::get('/progress-skripsi/create', [ProgressSkripsiController::class, 'create'])->name('progress-skripsi.create');
     Route::post('/progress-skripsi', [ProgressSkripsiController::class, 'store'])->name('progress-skripsi.store');
+    Route::get('/progress-skripsi/{progress}/file', [ProgressSkripsiController::class, 'file'])->name('progress-skripsi.file');
 
     Route::get('/milestones', [MilestoneController::class, 'index'])->name('milestones.index');
     Route::get('/milestones/create', [MilestoneController::class, 'create'])->name('milestones.create');

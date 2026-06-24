@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Notifications\WelcomeNotification;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -165,6 +166,28 @@ class SkripsiflowSeeder extends Seeder
             'updated_at' => '2026-05-15',
         ]);
 
+        $this->seedSampleFiles([
+            'skripsi/bab1-ahmad-riza.pdf',
+            'skripsi/bab2-ahmad-riza.pdf',
+            'skripsi/bab1-siti.pdf',
+            'skripsi/bab1-budi.pdf',
+        ]);
+
         $mahasiswa1->notify(new WelcomeNotification);
+    }
+
+    /**
+     * @param  array<int, string>  $paths
+     */
+    private function seedSampleFiles(array $paths): void
+    {
+        $disk = Storage::disk('public');
+        $samplePdf = "%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]>>endobj\nxref\n0 4\ntrailer<</Size 4/Root 1 0 R>>\nstartxref\n149\n%%EOF";
+
+        foreach ($paths as $path) {
+            if (! $disk->exists($path)) {
+                $disk->put($path, $samplePdf);
+            }
+        }
     }
 }

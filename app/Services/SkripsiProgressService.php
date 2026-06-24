@@ -159,7 +159,7 @@ class SkripsiProgressService
                 'catatan' => $progress->catatan_revisi ?: '-',
                 'status' => $this->statusLabel($progress->status),
                 'status_class' => $this->statusBadgeClass($progress->status),
-                'file_url' => $progress->file_path ? asset('storage/'.$progress->file_path) : null,
+                'file_url' => $progress->file_path ? route('progress-skripsi.file', $progress) : null,
                 'file_name' => $progress->file_path ? basename($progress->file_path) : null,
             ])
             ->values();
